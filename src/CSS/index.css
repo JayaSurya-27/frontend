@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* border: 1px solid lime; */
+}
+
+html {
+  font-family: sans-serif;
+  font-size: 22px;
+  scroll-behavior: smooth;
+  padding: 0 40px;
+}
+
+a {
+  text-decoration: none;
+}
+ul {
+  list-style-type: none;
+}
