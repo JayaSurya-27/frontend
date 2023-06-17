@@ -1,4 +1,5 @@
 import axios from "axios";
+import API_ENDPOINT from "./apiEndpoint";
 
 // Function to set the JWT token in the Authorization header of Axios requests
 const setAuthHeader = (token) => {
@@ -10,33 +11,11 @@ const setAuthHeader = (token) => {
 };
 
 // API endpoint URLs
-const API_URL = "http://your-backend-api-url.com";
-const LOGIN_URL = `${API_URL}/login/`;
-const REFRESH_TOKEN_URL = `${API_URL}/refresh-token/`;
-const USER_URL = `${API_URL}/user/`;
-
-// Function to perform user login
-export const login = async (email, password) => {
-  try {
-    const response = await axios.post(LOGIN_URL, { email, password });
-    const { accessToken, refreshToken } = response.data;
-
-    // Store the tokens in local storage
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-
-    // Set the access token in the Axios Authorization header
-    setAuthHeader(accessToken);
-
-    // Return the response data
-    return response.data;
-  } catch (error) {
-    throw error.response.data;
-  }
-};
+const REFRESH_TOKEN_URL = `${API_ENDPOINT}/refresh-token/`;
+const USER_URL = `${API_ENDPOINT}/user/`;
 
 // Function to refresh the access token
-export const refreshAccessToken = async () => {
+const refreshAccessToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refreshToken");
 
@@ -62,7 +41,7 @@ export const refreshAccessToken = async () => {
 };
 
 // Function to get user data
-export const getUserData = async () => {
+const getUserData = async () => {
   try {
     const response = await axios.get(USER_URL);
 
@@ -74,17 +53,25 @@ export const getUserData = async () => {
 };
 
 // Function to check if the user is authenticated
-export const isAuthenticated = () => {
+const isAuthenticated = () => {
   const accessToken = localStorage.getItem("accessToken");
   return !!accessToken; // Return true if the access token exists, false otherwise
 };
 
 // Function to logout the user
-export const logout = () => {
+const logout = () => {
   // Clear the tokens from local storage
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
 
   // Remove the access token from the Axios Authorization header
   setAuthHeader(null);
+};
+
+export {
+  refreshAccessToken,
+  getUserData,
+  isAuthenticated,
+  logout,
+  setAuthHeader,
 };

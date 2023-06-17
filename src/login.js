@@ -14,26 +14,13 @@ import * as Yup from "yup";
 import API_ENDPOINT from "./apiEndpoint";
 import axios from "axios";
 import { useState } from "react";
-
-// function Copyright(props) {
-//   return (
-//     <Typography
-//       variant="body2"
-//       color="text.secondary"
-//       align="center"
-//       {...props}
-//     >
-//       {"Copyright © "}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{" "}
-//       {new Date().getFullYear()}
-//       {"."}
-//     </Typography>
-//   );
-// }
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import {
+  logout,
+  isAuthenticated,
+  refreshAccessToken,
+  getUserData,
+  setAuthHeader,
+} from "./auth";
 
 const Validation = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Required"),
@@ -49,35 +36,43 @@ const Login = () => {
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(0);
 
-  const handleSubmit = (values) => {
-    var formdata = new FormData();
+  const handleSubmit = async (values) => {
+    const loginData = {
+      email: values.email,
+      password: values.password,
+    };
 
-    formdata.append("email", values.email);
-    formdata.append("password", values.password);
+    try {
+      const response = await axios.post(`${API_ENDPOINT}login`, loginData);
 
-    axios
-      .post(API_ENDPOINT + "api/individual/login/", formdata, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        if (res.status !== 200) {
-          setError(res.message);
-          setSubmitted(1);
-        } else if(res.status === 401){
-          setError("Invalid Credentials");
-          setSubmitted(1);
-        }
-        else {
-          setSubmitted(1);
-          setError("");
-        }
-      })
-      .catch((err) => {
-        setError(err);
-        console.log(err);
-      });
+      if (response.status === 200) {
+        const { accessToken, refreshToken } = response.data;
+
+        // Store the tokens in local storage
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        // Set the access token in the Axios Authorization header
+        setAuthHeader(accessToken);
+
+        setSubmitted(1);
+        setError("");
+      } else if (response.status === 401) {
+        setError("Invalid Credentials");
+        setSubmitted(1);
+      } else {
+        setError(response.data.message);
+        setSubmitted(1);
+      }
+    } catch (err) {
+      setError("An error occurred during login. Please try again.");
+      setSubmitted(1);
+      console.error(err);
+    }
+  };
+
+  const handleLogout = () => {
+    logout(); 
   };
 
   return (
@@ -180,15 +175,12 @@ const Login = () => {
             ) : (
               <>
                 <h3 className="text-center">Submitted Successfully!</h3>
-                <p className="text-center">
-                  hello User
-                </p>
+                <p className="text-center">hello User</p>
               </>
             )}
           </>
         )}
       </Box>
-      {/* <Copyright sx={{ mt: 5 }} /> */}
     </Container>
   );
 };
