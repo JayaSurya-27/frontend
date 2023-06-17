@@ -1,3 +1,11 @@
-.conatainer {
-  margin-top: 100px;
+a {
+  text-decoration: none;
+  outline: none;
+  text-align: center;
+  color: inherit;
+}
+
+.link_default{
+    text-decoration: underline;
+    color: rgb(27, 89, 222);
 }

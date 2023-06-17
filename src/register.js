@@ -1,15 +1,13 @@
 import { useRef, useState, useEffect } from "react";
-import {
-  faCheck,
-  faTimes,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import "./CSS/register.css";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,24}$/;
-const REGISTER_URL = "/register";
+const PWD_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+
 
 const Register = () => {
   const userRef = useRef();
@@ -58,11 +56,10 @@ const Register = () => {
     }
     try {
       const response = await axios.post(
-        REGISTER_URL,
+        "http://localhost:8000/register",    //change this to the server
         JSON.stringify({ user, pwd }),
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true,
         }
       );
 
@@ -95,27 +92,15 @@ const Register = () => {
         </section>
       ) : (
         <section>
-          <p
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-          >
+          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>
             {errMsg}
           </p>
           <h1>Register</h1>
           <form onSubmit={handleSubmit}>
-            <label htmlFor="username">
-              Username:
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validName ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validName || !user ? "hide" : "invalid"}
-              />
-            </label>
+            <label htmlFor="username">Username:</label>
             <input
               type="text"
+              spellcheck="false"
               id="username"
               ref={userRef}
               autoComplete="none"
@@ -128,7 +113,7 @@ const Register = () => {
             <p
               id="uidnote"
               className={
-                userFocus && user && !validName ? "instructions" : "offscreen"
+                !userFocus && user && !validName ? "instructions" : "offscreen"
               }
             >
               <FontAwesomeIcon icon={faInfoCircle} />
@@ -138,18 +123,7 @@ const Register = () => {
               <br />
               Letters, numbers, underscores, hyphens allowed.
             </p>
-
-            <label htmlFor="password">
-              Password:
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validPwd ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validPwd || !pwd ? "hide" : "invalid"}
-              />
-            </label>
+            <label htmlFor="password">Password:</label>
             <input
               type="password"
               id="password"
@@ -161,25 +135,16 @@ const Register = () => {
             />
             <p
               id="pwdnote"
-              className={pwdFocus && !validPwd ? "instructions" : "offscreen"}
+              className={
+                !pwdFocus && pwd && !validPwd ? "instructions" : "offscreen"
+              }
             >
               <FontAwesomeIcon icon={faInfoCircle} />
               8 to 24 characters.
               <br />
-              Must include uppercase and lowercase letters, a number .
+              Should include letters and number only .
             </p>
-
-            <label htmlFor="confirm_pwd">
-              Confirm Password:
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validMatch && matchPwd ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validMatch || !matchPwd ? "hide" : "invalid"}
-              />
-            </label>
+            <label htmlFor="confirm_pwd">Confirm Password:</label>
             <input
               type="password"
               id="confirm_pwd"
@@ -198,9 +163,9 @@ const Register = () => {
               <FontAwesomeIcon icon={faInfoCircle} />
               Must match the first password input field.
             </p>
-
             <button
               disabled={!validName || !validPwd || !validMatch ? true : false}
+              type="submit"
             >
               Sign Up
             </button>
@@ -209,8 +174,7 @@ const Register = () => {
             Already registered?
             <br />
             <span className="line">
-              {/*put router link here*/}
-              <a href="./login.js">Sign In</a>
+              <Link to="/login">Sign In</Link>
             </span>
           </p>
         </section>
