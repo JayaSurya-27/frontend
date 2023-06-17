@@ -1,5 +1,6 @@
 import axios from "axios";
 import API_ENDPOINT from "./apiEndpoint";
+import jwt_decode from "jwt-decode";
 
 // Function to set the JWT token in the Authorization header of Axios requests
 const setAuthHeader = (token) => {
@@ -11,18 +12,18 @@ const setAuthHeader = (token) => {
 };
 
 // API endpoint URLs
-const REFRESH_TOKEN_URL = `${API_ENDPOINT}/refresh-token/`;
-const USER_URL = `${API_ENDPOINT}/user/`;
+const REFRESH_TOKEN_URL = `${API_ENDPOINT}api/individual/refreshToken/`;
+const USER_URL = `${API_ENDPOINT}user/`; // not created
 
 // Function to refresh the access token
 const refreshAccessToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refreshToken");
-
+    console.log(refreshToken);
     if (refreshToken) {
       const response = await axios.post(REFRESH_TOKEN_URL, { refreshToken });
       const { accessToken } = response.data;
-
+      console.log(accessToken);
       // Update the access token in local storage
       localStorage.setItem("accessToken", accessToken);
 
@@ -53,9 +54,26 @@ const getUserData = async () => {
 };
 
 // Function to check if the user is authenticated
+
 const isAuthenticated = () => {
   const accessToken = localStorage.getItem("accessToken");
-  return !!accessToken; // Return true if the access token exists, false otherwise
+
+  if (accessToken) {
+    try {
+      const decodedToken = jwt_decode(accessToken);
+      const currentTime = Date.now() / 1000; // Convert current time to seconds
+
+      if (decodedToken.exp > currentTime) {
+        // Access token is not expired
+        return true;
+      }
+    } catch (error) {
+      // Invalid token or error occurred during decoding
+      console.error("Error decoding access token:", error);
+    }
+  }
+
+  return false; // Access token is missing or expired
 };
 
 // Function to logout the user

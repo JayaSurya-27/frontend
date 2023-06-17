@@ -41,23 +41,20 @@ const Login = () => {
       email: values.email,
       password: values.password,
     };
-
     try {
       const response = await axios.post(
         `${API_ENDPOINT}api/individual/login/`,
         loginData
       );
-
       if (response.status === 200) {
-        const { accessToken, refreshToken } = response.data;
-
+        const accessToken = response.data.data.access_token;
+        const refreshToken = response.data.data.refresh_token;
         // Store the tokens in local storage
+
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-
         // Set the access token in the Axios Authorization header
         setAuthHeader(accessToken);
-
         setSubmitted(1);
         setError("");
       } else if (response.status === 401) {
@@ -68,11 +65,26 @@ const Login = () => {
         setSubmitted(1);
       }
     } catch (err) {
-      setError("An error occurred during login. Please try again.");
-      setSubmitted(1);
-      console.error(err);
+      if (err.response && err.response.status === 401) {
+        try {
+          // Attempt to refresh the access token
+
+          await refreshAccessToken();
+          // Retry the login request
+          return handleSubmit(values);
+        } catch (refreshError) {
+          setError("An error occurred during login. Please try again.");
+          setSubmitted(1);
+          console.error(refreshError);
+        }
+      } else {
+        setError("An error occurred during login. Please try again.");
+        setSubmitted(1);
+        console.error(err);
+      }
     }
   };
+
 
   const handleLogout = () => {
     logout();
