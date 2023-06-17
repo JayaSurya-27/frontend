@@ -43,7 +43,10 @@ const Login = () => {
     };
 
     try {
-      const response = await axios.post(`${API_ENDPOINT}login`, loginData);
+      const response = await axios.post(
+        `${API_ENDPOINT}api/individual/login/`,
+        loginData
+      );
 
       if (response.status === 200) {
         const { accessToken, refreshToken } = response.data;
@@ -72,7 +75,7 @@ const Login = () => {
   };
 
   const handleLogout = () => {
-    logout(); 
+    logout();
   };
 
   return (
