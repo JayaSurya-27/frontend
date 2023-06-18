@@ -1,6 +1,6 @@
 import axios from "axios";
 import API_ENDPOINT from "./apiEndpoint";
-import jwt_decode from "jwt-decode";
+import Swal from "sweetalert2";
 
 // Function to set the JWT token in the Authorization header of Axios requests
 const setAuthHeader = (token) => {
@@ -13,6 +13,7 @@ const setAuthHeader = (token) => {
 
 // API endpoint URLs
 const REFRESH_TOKEN_URL = `${API_ENDPOINT}api/individual/refreshToken/`;
+const IS_AUTHENTICATED = `${API_ENDPOINT}api/individual/isAuthenticated/`;
 const USER_URL = `${API_ENDPOINT}user/`; // not created
 
 // Function to refresh the access token
@@ -55,35 +56,62 @@ const getUserData = async () => {
 
 // Function to check if the user is authenticated
 
-const isAuthenticated = () => {
+// const isAuthenticated = () => {
+//   const accessToken = localStorage.getItem("accessToken");
+
+//   axios
+//     .post(IS_AUTHENTICATED, { accessToken })
+//     .then((response) => {
+//       console.log(response);
+//       if (response.status === 200) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       return false;
+//     });
+// };
+
+const isAuthenticated = async () => {
   const accessToken = localStorage.getItem("accessToken");
 
-  if (accessToken) {
-    try {
-      const decodedToken = jwt_decode(accessToken);
-      const currentTime = Date.now() / 1000; // Convert current time to seconds
-
-      if (decodedToken.exp > currentTime) {
-        // Access token is not expired
-        return true;
-      }
-    } catch (error) {
-      // Invalid token or error occurred during decoding
-      console.error("Error decoding access token:", error);
+  try {
+    const response = await axios.post(IS_AUTHENTICATED, { accessToken });
+    console.log(response); // 200
+    if (response.status === 200) {
+      return true;
+    } else {
+      return false;
     }
+  } catch (error) {
+    console.log(error);  // 401
+    return false;
   }
-
-  return false; // Access token is missing or expired
 };
 
+
+
 // Function to logout the user
-const logout = () => {
+const logout = (setIsLoggedIn) => {
   // Clear the tokens from local storage
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
-
   // Remove the access token from the Axios Authorization header
   setAuthHeader(null);
+  setIsLoggedIn(false);
+
+  // swal alert
+
+  Swal.fire({
+    icon: "success",
+    font: "Poppins",
+    title: "Logged Out Sucessfully!",
+    timer: 1500,
+    
+  });
 };
 
 export {

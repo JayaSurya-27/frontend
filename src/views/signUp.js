@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import API_ENDPOINT from "./apiEndpoint";
+import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 import { useState } from "react";
 

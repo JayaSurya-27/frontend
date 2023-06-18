@@ -3,7 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -11,23 +11,22 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import API_ENDPOINT from "./apiEndpoint";
+import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 import { useState } from "react";
 import {
-  logout,
   isAuthenticated,
   refreshAccessToken,
   getUserData,
   setAuthHeader,
-} from "./auth";
+} from "./../auth";
 
 const Validation = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Required"),
   password: Yup.string().required("Required"),
 });
 
-const Login = () => {
+const Login = ({ isLoggedIn, setIsLoggedIn }) => {
   const initialValues = {
     email: "",
     password: "",
@@ -47,6 +46,8 @@ const Login = () => {
         loginData
       );
       if (response.status === 200) {
+        setIsLoggedIn(true);
+
         const accessToken = response.data.data.access_token;
         const refreshToken = response.data.data.refresh_token;
         // Store the tokens in local storage
@@ -54,40 +55,18 @@ const Login = () => {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         // Set the access token in the Axios Authorization header
+
         setAuthHeader(accessToken);
         setSubmitted(1);
         setError("");
       } else if (response.status === 401) {
-        setError("Invalid Credentials");
-        setSubmitted(1);
+        // Unauthorized add swal --------------------
       } else {
-        setError(response.data.message);
-        setSubmitted(1);
+       // add swal ----------------------
       }
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        try {
-          // Attempt to refresh the access token
-
-          await refreshAccessToken();
-          // Retry the login request
-          return handleSubmit(values);
-        } catch (refreshError) {
-          setError("An error occurred during login. Please try again.");
-          setSubmitted(1);
-          console.error(refreshError);
-        }
-      } else {
-        setError("An error occurred during login. Please try again.");
-        setSubmitted(1);
-        console.error(err);
-      }
+      //swal error --------------------------------
     }
-  };
-
-
-  const handleLogout = () => {
-    logout();
   };
 
   return (
@@ -101,7 +80,7 @@ const Login = () => {
           alignItems: "center",
         }}
       >
-        {!submitted ? (
+        {!isLoggedIn ? (
           <>
             <Avatar sx={{ m: 1, bgcolor: "secondary.main", p: 3 }}>
               <LockOutlinedIcon />
@@ -182,17 +161,7 @@ const Login = () => {
           </>
         ) : (
           <>
-            {error ? (
-              <>
-                <h3 className="text-center">Something went wrong</h3>
-                <p className="text-center">please try again later</p>
-              </>
-            ) : (
-              <>
-                <h3 className="text-center">Submitted Successfully!</h3>
-                <p className="text-center">hello User</p>
-              </>
-            )}
+          <Navigate to="/" />
           </>
         )}
       </Box>

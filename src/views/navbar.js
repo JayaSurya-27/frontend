@@ -11,15 +11,17 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
+import { logout } from "./../auth";
+import { Avatar } from "@mui/material";
 
-import "./CSS/navbar.css";
-
-import("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+import "../CSS/navbar.css";
 
 const pages = ["About", "Vault", "Contact"];
+const settings = ["Profile", "Logout"];
 
-const NavBar = () => {
+const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
   const [anchorNav, setAnchorNav] = useState(null);
+  const [anchorSettings, setAnchorSettings] = useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorNav(event.currentTarget);
@@ -27,6 +29,14 @@ const NavBar = () => {
 
   const handleCloseNavMenu = () => {
     setAnchorNav(null);
+  };
+
+  const handleOpenSettingsMenu = (event) => {
+    setAnchorSettings(event.currentTarget);
+  };
+
+  const handleCloseSettingsMenu = () => {
+    setAnchorSettings(null);
   };
 
   return (
@@ -122,38 +132,83 @@ const NavBar = () => {
               </Button>
             ))}
           </Box>
+          {!isLoggedIn ? (
+            <>
+              <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    color: "white",
+                    borderColor: "white",
+                    borderRadius: 30,
+                    "&:hover": {
+                      backgroundColor: "white",
+                      color: "primary.dark",
+                    },
+                  }}
+                >
+                  <Link to={"/login"}>Login</Link>
+                </Button>
+              </Box>
+              <Box sx={{ flexGrow: 0, display: { xs: "block", md: "none" } }}>
+                <Button
+                  variant="outlined"
+                  href="/login"
+                  sx={{
+                    color: "white",
+                    borderColor: "white",
+                    borderRadius: 30,
+                    fontSize: "0.6rem",
+                  }}
+                >
+                  <Link to={"/login"}>Login</Link>
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Box sx={{ flexGrow: 1 }}>
+                <IconButton
+                  size="large"
+                  onClick={handleOpenSettingsMenu}
+                  color="inherit"
+                  sx={{ float: "right" }}
+                >
+                  <Avatar>H</Avatar>
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorSettings}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  open={Boolean(anchorSettings)}
+                  onClose={handleCloseSettingsMenu}
+                >
+                  <MenuItem onClick={handleCloseSettingsMenu}>
+                    <Link to={"/profile"}>
+                      <Typography textAlign="center">Profile</Typography>
+                    </Link>
+                  </MenuItem>
 
-          <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
-            <Button
-              id="login" ///
-              variant="outlined"
-              sx={{
-                color: "white",
-                borderColor: "white",
-                borderRadius: 30,
-                "&:hover": {
-                  backgroundColor: "white",
-                  color: "primary.dark",
-                },
-              }}
-            >
-              <Link to={"/login"}>Login</Link>
-            </Button>
-          </Box>
-          <Box sx={{ flexGrow: 0, display: { xs: "block", md: "none" } }}>
-            <Button
-              variant="outlined"
-              href="/login"
-              sx={{
-                color: "white",
-                borderColor: "white",
-                borderRadius: 30,
-                fontSize: "0.6rem",
-              }}
-            >
-              <Link to={"/login"}>Login</Link>
-            </Button>
-          </Box>
+                  <MenuItem
+                    onClick={() => {
+                      logout(setIsLoggedIn);
+                      handleCloseSettingsMenu();
+                    }}
+                  >
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </Box>
+            </>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
