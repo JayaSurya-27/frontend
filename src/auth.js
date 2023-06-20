@@ -20,11 +20,9 @@ const USER_URL = `${API_ENDPOINT}user/`; // not created
 const refreshAccessToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refreshToken");
-    console.log(refreshToken);
     if (refreshToken) {
       const response = await axios.post(REFRESH_TOKEN_URL, { refreshToken });
-      const { accessToken } = response.data;
-      console.log(accessToken);
+      const { accessToken } = response.data.accessToken;
       // Update the access token in local storage
       localStorage.setItem("accessToken", accessToken);
 
@@ -32,7 +30,7 @@ const refreshAccessToken = async () => {
       setAuthHeader(accessToken);
 
       // Return the response data
-      return response.data;
+      return response;
     } else {
       // No refresh token found, user needs to login again
       throw { message: "Refresh token not found. Please login again." };
@@ -54,27 +52,6 @@ const getUserData = async () => {
   }
 };
 
-// Function to check if the user is authenticated
-
-// const isAuthenticated = () => {
-//   const accessToken = localStorage.getItem("accessToken");
-
-//   axios
-//     .post(IS_AUTHENTICATED, { accessToken })
-//     .then((response) => {
-//       console.log(response);
-//       if (response.status === 200) {
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//       return false;
-//     });
-// };
-
 const isAuthenticated = async () => {
   const accessToken = localStorage.getItem("accessToken");
 
@@ -87,12 +64,10 @@ const isAuthenticated = async () => {
       return false;
     }
   } catch (error) {
-    console.log(error);  // 401
+    console.log(error); // 401
     return false;
   }
 };
-
-
 
 // Function to logout the user
 const logout = (setIsLoggedIn) => {
@@ -110,7 +85,6 @@ const logout = (setIsLoggedIn) => {
     font: "Poppins",
     title: "Logged Out Sucessfully!",
     timer: 1500,
-    
   });
 };
 

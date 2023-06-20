@@ -9,6 +9,7 @@ import About from "./views/about.js";
 import Contact from "./views/contact.js";
 import Login from "./views/login.js";
 import SignUp from "./views/signUp";
+import { refreshAccessToken } from "./auth";
 
 import("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
 
@@ -25,6 +26,22 @@ function App() {
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+const refreshToken = async () => {
+  try {
+    const response = await refreshAccessToken();
+    if (response.status === 200) {
+      setIsLoggedIn(true);
+      setTimeout(refreshToken, 1000 * 1 * 14);
+    }
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    // Handle the error or display an error message to the user
+  }
+};
+
+refreshToken();
+
 
   return (
     <div className="app">
