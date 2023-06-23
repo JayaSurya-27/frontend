@@ -190,9 +190,13 @@ const FileUpload = ({ postUrl }) => {
                 variant="contained"
                 color="primary"
                 sx={{
-                  mt: 2, // Add margin-top to create space between the list and the button
-                  alignSelf: "flex-end", // Align the button to the right side
+                  mt: "auto",
+                  position: "fixed",
+                  bottom: 16,
+                  left: "50%",
+                  transform: "translateX(-50%)",
                 }}
+                onClick={handleSubmit}
               >
                 Submit
               </Button>
