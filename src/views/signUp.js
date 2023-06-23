@@ -16,6 +16,9 @@ import * as Yup from "yup";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 import { useState } from "react";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import "../CSS/signup.css";
 
 // function Copyright(props) {
 //   return (
@@ -40,13 +43,25 @@ import { useState } from "react";
 const nameRegEx = /^[a-zA-Z\s]*$/;
 const PasswordRegEx = /^[\S]{4,32}$/;
 
-const Validation = Yup.object().shape({
+const individualValidation = Yup.object().shape({
   firstName: Yup.string()
     .required("Required")
     .matches(nameRegEx, "should contain only letters"),
   lastName: Yup.string()
     .required("Required")
     .matches(nameRegEx, "should contain only letters"),
+  email: Yup.string().email("Invalid email address").required("Required"),
+  password: Yup.string()
+    .required("Required")
+    .min(4, "Password is too short - should be 4 chars minimum.")
+    .matches(PasswordRegEx, "whitespace is not allowed"),
+  confirmPassword: Yup.string()
+    .required("Required")
+    .oneOf([Yup.ref("password"), null], "Passwords must match"),
+});
+
+const organizationValidation = Yup.object().shape({
+  organizationName: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email address").required("Required"),
   password: Yup.string()
     .required("Required")
@@ -68,8 +83,19 @@ const SignUp = () => {
 
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(0);
+  const [userType, setUserType] = useState("individual");
+  const [hasSelection, setHasSelection] = useState(true);
 
-  const handleSubmit = (values) => {
+  const handleChange = (event, newUser) => {
+    if (newUser !== null) {
+      setUserType(newUser);
+      setHasSelection(true);
+    } else {
+      setHasSelection(false);
+    }
+  };
+
+  const handleSubmitIndividual = (values) => {
     var formdata = new FormData();
     formdata.append("firstName", values.firstName);
     formdata.append("lastName", values.lastName);
@@ -78,6 +104,33 @@ const SignUp = () => {
 
     axios
       .post(API_ENDPOINT + "api/individual/signup/", formdata, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        if (res.status !== 200) {
+          setError(res.message);
+          setSubmitted(1);
+        } else {
+          setSubmitted(1);
+          setError("");
+        }
+      })
+      .catch((err) => {
+        setError(err);
+        console.log(err);
+      });
+  };
+
+  const handleSubmitOrganization = (values) => {
+    var formdata = new FormData();
+    formdata.append("name", values.organizationName);
+    formdata.append("email", values.email);
+    formdata.append("password", values.password);
+
+    axios
+      .post(API_ENDPOINT + "api/organization/signup/", formdata, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -116,143 +169,290 @@ const SignUp = () => {
             <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
               Sign up
             </Typography>
-            <Formik
-              enableReinitialize={true}
-              initialValues={initialValues}
-              onSubmit={handleSubmit}
-              validationSchema={Validation}
-              sx={{ mt: 3 }}
+            <ToggleButtonGroup
+              color="primary"
+              value={userType}
+              exclusive
+              onChange={handleChange}
+              aria-label="Platform"
+              sx={{ mb: 2 }}
+              required
             >
-              {(props) => {
-                return (
-                  <Form>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <Field
-                          as={TextField}
-                          label="First Name"
-                          type="text"
-                          name="firstName"
-                          fullWidth
-                          helperText={<ErrorMessage name="firstName" />}
-                          error={
-                            props.errors.firstName && props.touched.firstName
-                          }
-                          inputProps={{
-                            style: {
-                              height: "25px",
-                            },
-                          }}
-                        />
+              <ToggleButton
+                value="individual"
+                className={userType === "individual" ? "selected" : ""}
+              >
+                Individual
+              </ToggleButton>
+              <ToggleButton
+                value="organization"
+                className={userType === "organization" ? "selected" : ""}
+              >
+                Organization
+              </ToggleButton>
+            </ToggleButtonGroup>
+            {userType === "individual" ? (
+              <Formik
+                enableReinitialize={true}
+                initialValues={initialValues}
+                onSubmit={handleSubmitIndividual}
+                validationSchema={individualValidation}
+                sx={{ mt: 3 }}
+              >
+                {(props) => {
+                  return (
+                    <Form>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                          <Field
+                            as={TextField}
+                            label="First Name"
+                            type="text"
+                            name="firstName"
+                            fullWidth
+                            helperText={<ErrorMessage name="firstName" />}
+                            error={
+                              props.errors.firstName && props.touched.firstName
+                            }
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <Field
+                            as={TextField}
+                            label="Last Name"
+                            type="text"
+                            name="lastName"
+                            fullWidth
+                            helperText={<ErrorMessage name="lastName" />}
+                            error={
+                              props.errors.lastName && props.touched.lastName
+                            }
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Field
+                            as={TextField}
+                            label="Email"
+                            type="Email"
+                            name="email"
+                            fullWidth
+                            helperText={<ErrorMessage name="email" />}
+                            error={props.errors.email && props.touched.email}
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Field
+                            as={TextField}
+                            label="Password"
+                            name="password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            helperText={<ErrorMessage name="password" />}
+                            error={
+                              props.errors.password && props.touched.password
+                            }
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Field
+                            as={TextField}
+                            label="Confirm Password"
+                            name="confirmPassword"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                            helperText={<ErrorMessage name="confirmPassword" />}
+                            error={
+                              props.errors.confirmPassword &&
+                              props.touched.confirmPassword
+                            }
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <FormControlLabel
+                            control={<Checkbox value="...." />}
+                            required
+                            label={
+                              <span style={{ fontSize: "0.8rem" }}>
+                                {"I agree to the terms and conditons"}
+                              </span>
+                            }
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Field
-                          as={TextField}
-                          label="Last Name"
-                          type="text"
-                          name="lastName"
-                          fullWidth
-                          helperText={<ErrorMessage name="lastName" />}
-                          error={
-                            props.errors.lastName && props.touched.lastName
-                          }
-                          inputProps={{
-                            style: {
-                              height: "25px",
-                            },
-                          }}
-                        />
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                      >
+                        Sign Up
+                      </Button>
+                      <Grid
+                        container
+                        justifyContent="flex-end"
+                        sx={{ fontSize: " 20px" }}
+                      >
+                        <Grid item>
+                          <Link to="/login" className="link_default">
+                            Already have an account? Login
+                          </Link>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={12}>
-                        <Field
-                          as={TextField}
-                          label="Email"
-                          type="Email"
-                          name="email"
-                          fullWidth
-                          helperText={<ErrorMessage name="email" />}
-                          error={props.errors.email && props.touched.email}
-                          inputProps={{
-                            style: {
-                              height: "25px",
-                            },
-                          }}
-                        />
+                    </Form>
+                  );
+                }}
+              </Formik>
+            ) : (
+              <Formik
+                enableReinitialize={true}
+                initialValues={initialValues}
+                onSubmit={handleSubmitOrganization}
+                validationSchema={organizationValidation}
+                sx={{ mt: 3 }}
+              >
+                {(props) => {
+                  return (
+                    <Form>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                          <Field
+                            as={TextField}
+                            label="Organization Name"
+                            type="text"
+                            name="organizationName"
+                            fullWidth
+                            helperText={
+                              <ErrorMessage name="organizationName" />
+                            }
+                            error={
+                              props.errors.organizationName &&
+                              props.touched.organizationName
+                            }
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Field
+                            as={TextField}
+                            label="Email"
+                            type="Email"
+                            name="email"
+                            fullWidth
+                            helperText={<ErrorMessage name="email" />}
+                            error={props.errors.email && props.touched.email}
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Field
+                            as={TextField}
+                            label="Password"
+                            name="password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            helperText={<ErrorMessage name="password" />}
+                            error={
+                              props.errors.password && props.touched.password
+                            }
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Field
+                            as={TextField}
+                            label="Confirm Password"
+                            name="confirmPassword"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            inputProps={{
+                              style: {
+                                height: "25px",
+                              },
+                            }}
+                            helperText={<ErrorMessage name="confirmPassword" />}
+                            error={
+                              props.errors.confirmPassword &&
+                              props.touched.confirmPassword
+                            }
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <FormControlLabel
+                            control={<Checkbox value="...." />}
+                            required
+                            label={
+                              <span style={{ fontSize: "0.8rem" }}>
+                                {"I agree to the terms and conditons"}
+                              </span>
+                            }
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={12}>
-                        <Field
-                          as={TextField}
-                          label="Password"
-                          name="password"
-                          type="password"
-                          fullWidth
-                          variant="outlined"
-                          helperText={<ErrorMessage name="password" />}
-                          error={
-                            props.errors.password && props.touched.password
-                          }
-                          inputProps={{
-                            style: {
-                              height: "25px",
-                            },
-                          }}
-                        />
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                      >
+                        Sign Up
+                      </Button>
+                      <Grid
+                        container
+                        justifyContent="flex-end"
+                        sx={{ fontSize: " 20px" }}
+                      >
+                        <Grid item>
+                          <Link to="/login" className="link_default">
+                            Already have an account? Login
+                          </Link>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={12}>
-                        <Field
-                          as={TextField}
-                          label="Confirm Password"
-                          name="confirmPassword"
-                          type="password"
-                          fullWidth
-                          variant="outlined"
-                          inputProps={{
-                            style: {
-                              height: "25px",
-                            },
-                          }}
-                          helperText={<ErrorMessage name="confirmPassword" />}
-                          error={
-                            props.errors.confirmPassword &&
-                            props.touched.confirmPassword
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <FormControlLabel
-                          control={<Checkbox value="...." />}
-                          required
-                          label={
-                            <span style={{ fontSize: "0.8rem" }}>
-                              {"I agree to the terms and conditons"}
-                            </span>
-                          }
-                        />
-                      </Grid>
-                    </Grid>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      sx={{ mt: 3, mb: 2 }}
-                    >
-                      Sign Up
-                    </Button>
-                    <Grid
-                      container
-                      justifyContent="flex-end"
-                      sx={{ fontSize: " 20px" }}
-                    >
-                      <Grid item>
-                        <Link to="/login" className="link_default">
-                          Already have an account? Login
-                        </Link>
-                      </Grid>
-                    </Grid>
-                  </Form>
-                );
-              }}
-            </Formik>
+                    </Form>
+                  );
+                }}
+              </Formik>
+            )}
           </>
         ) : (
           <>

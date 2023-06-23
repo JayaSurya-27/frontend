@@ -14,12 +14,15 @@ import * as Yup from "yup";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 import { useState } from "react";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import {
   isAuthenticated,
   refreshAccessToken,
   getUserData,
   setAuthHeader,
 } from "./../auth";
+import "../CSS/login.css";
 
 const Validation = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Required"),
@@ -34,17 +37,30 @@ const Login = ({ isLoggedIn, setIsLoggedIn }) => {
 
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(0);
+  const [userType, setUserType] = useState("individual");
+  const [hasSelection, setHasSelection] = useState(true);
+
+  const handleChange = (event, newUser) => {
+    if (newUser !== null) {
+      setUserType(newUser);
+      setHasSelection(true);
+    } else {
+      setHasSelection(false);
+    }
+  };
 
   const handleSubmit = async (values) => {
     const loginData = {
       email: values.email,
       password: values.password,
     };
+
+    var path =
+      userType === "individual"
+        ? "api/individual/login/"
+        : "api/organization/login/";
     try {
-      const response = await axios.post(
-        `${API_ENDPOINT}api/individual/login/`,
-        loginData
-      );
+      const response = await axios.post(`${API_ENDPOINT}${path}`, loginData);
       if (response.status === 200) {
         setIsLoggedIn(true);
 
@@ -62,7 +78,7 @@ const Login = ({ isLoggedIn, setIsLoggedIn }) => {
       } else if (response.status === 401) {
         // Unauthorized add swal --------------------
       } else {
-       // add swal ----------------------
+        // add swal --------------------------------
       }
     } catch (err) {
       //swal error --------------------------------
@@ -88,6 +104,29 @@ const Login = ({ isLoggedIn, setIsLoggedIn }) => {
             <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
               Login
             </Typography>
+            <ToggleButtonGroup
+              color="primary"
+              value={userType}
+              exclusive
+              onChange={handleChange}
+              aria-label="Platform"
+              sx={{ mb: 2 }}
+              required
+            >
+              <ToggleButton
+                value="individual"
+                className={userType === "individual" ? "selected" : ""}
+              >
+                Individual
+              </ToggleButton>
+              <ToggleButton
+                value="organization"
+                className={userType === "organization" ? "selected" : ""}
+              >
+                Organization
+              </ToggleButton>
+            </ToggleButtonGroup>
+
             <Formik
               enableReinitialize={true}
               initialValues={initialValues}
@@ -161,7 +200,7 @@ const Login = ({ isLoggedIn, setIsLoggedIn }) => {
           </>
         ) : (
           <>
-          <Navigate to="/" />
+            <Navigate to="/" />
           </>
         )}
       </Box>
