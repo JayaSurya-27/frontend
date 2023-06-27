@@ -46,14 +46,25 @@ const FileUpload = ({ postUrl }) => {
     event.preventDefault();
 
     if (selectedFiles.length > 0) {
+      console.log(selectedFiles);
       const uploadPromises = selectedFiles.map((file) => {
         const formData = new FormData();
-        formData.append("files", file);
-        return axios.post(postUrl, formData);
+        formData.append("name", file.name);
+        console.log(localStorage.getItem("userId"));
+        formData.append("owner", localStorage.getItem("userId"));
+        formData.append("file", file);
+
+        return axios
+          .post(postUrl, formData)
+          .then((response) => response.data)
+          .catch((error) => {
+            throw error;
+          });
       });
 
       try {
         await Promise.all(uploadPromises);
+        setSelectedFiles([]);
         console.log("All files uploaded successfully!");
       } catch (error) {
         console.error("Error uploading files:", error);
@@ -102,7 +113,6 @@ const FileUpload = ({ postUrl }) => {
                     borderRadius: "4px",
                     padding: "16px",
                     cursor: "pointer",
-                    // height: "32vh",
                   }}
                 >
                   <Typography variant="body2">

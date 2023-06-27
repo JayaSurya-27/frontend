@@ -66,10 +66,13 @@ const Login = ({ isLoggedIn, setIsLoggedIn }) => {
 
         const accessToken = response.data.data.access_token;
         const refreshToken = response.data.data.refresh_token;
-        // Store the tokens in local storage
+        const userId = response.data.data.id;
 
+        // Store the tokens in local storage
+        
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userId", userId);
         // Set the access token in the Axios Authorization header
 
         setAuthHeader(accessToken);

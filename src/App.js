@@ -32,7 +32,7 @@ const refreshToken = async () => {
     const response = await refreshAccessToken();
     if (response.status === 200) {
       setIsLoggedIn(true);
-      setTimeout(refreshToken, 1000 * 1 * 14);
+      setTimeout(refreshToken, 1000 * 60 * 14);
     }
   } catch (error) {
     console.error("Error refreshing access token:", error);
