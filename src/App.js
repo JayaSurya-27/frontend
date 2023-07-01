@@ -26,22 +26,22 @@ function App() {
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState("individual");
 
-const refreshToken = async () => {
-  try {
-    const response = await refreshAccessToken();
-    if (response.status === 200) {
-      setIsLoggedIn(true);
-      setTimeout(refreshToken, 1000 * 60 * 14);
+  const refreshToken = async () => {
+    try {
+      const response = await refreshAccessToken();
+      if (response.status === 200) {
+        setIsLoggedIn(true);
+        setTimeout(refreshToken, 1000 * 60 * 14);
+      }
+    } catch (error) {
+      console.error("Error refreshing access token:", error);
+      // Handle the error or display an error message to the user
     }
-  } catch (error) {
-    console.error("Error refreshing access token:", error);
-    // Handle the error or display an error message to the user
-  }
-};
+  };
 
-refreshToken();
-
+  refreshToken();
 
   return (
     <div className="app">
@@ -52,7 +52,11 @@ refreshToken();
           <Route
             path="/vault"
             element={
-              <Vault setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} />
+              <Vault
+                setIsLoggedIn={setIsLoggedIn}
+                isLoggedIn={isLoggedIn}
+                userType={userType}
+              />
             }
           />
           <Route path="/about" element={<About />} />
@@ -60,7 +64,12 @@ refreshToken();
           <Route
             path="/login"
             element={
-              <Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} />
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                isLoggedIn={isLoggedIn}
+                userType={userType}
+                setUserType={setUserType}
+              />
             }
           />
           <Route path="/signup" element={<SignUp />} />

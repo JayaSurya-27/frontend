@@ -10,6 +10,7 @@ import { List, ListItem, ListItemText, ListItemAvatar } from "@mui/material";
 import { Avatar } from "@mui/material";
 import { IconButton } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import FilePicker from "./filePicker";
 
 const FileUpload = ({ postUrl }) => {
   const [open, setOpen] = useState(false);
@@ -78,7 +79,7 @@ const FileUpload = ({ postUrl }) => {
     <Container component="main" maxWidth="xl">
       <Box sx={{ p: 2 }}>
         <Button variant="contained" onClick={handleOpen}>
-          Upload File
+          Upload Files
         </Button>
         <Modal
           open={open}
@@ -92,137 +93,25 @@ const FileUpload = ({ postUrl }) => {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: "80%",
+              width: "auto",
               maxWidth: 700,
-              height: "60%",
-              maxHeight: 500,
-              p: 2,
+              maxHeight: 900,
+
               textAlign: "center",
             }}
-            onDrop={handleDrop}
-            onDragOver={(event) => event.preventDefault()}
           >
-            <Typography variant="h5" id="modal-title">
-              Upload File
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-              <label htmlFor="file-input">
-                <div
-                  style={{
-                    border: "2px dashed gray",
-                    borderRadius: "4px",
-                    padding: "16px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <Typography variant="body2">
-                    Drag and drop files here or click to select files
-                  </Typography>
-                  {selectedFiles.length > 0 && (
-                    <Box
-                      sx={{
-                        mt: 3,
-                        overflow: "auto",
-                        maxHeight: "20vh",
-                        display: {},
-                        width: "auto",
-                        // height: "auto",
-                      }}
-                    >
-                      <List
-                        dense={true}
-                        sx={{
-                          display: "grid",
-                          gridTemplateColumns: "repeat(3, 1fr)",
-                          gap: 1,
-                          minWidth: "100px",
-                          overflowY: "scroll",
-                          width: "100%",
-
-                          "@media (max-width: 768px)": {
-                            gridTemplateColumns: "repeat(2, 1fr)",
-                          },
-
-                          "@media (max-width: 480px)": {
-                            gridTemplateColumns: "repeat(1, 1fr)",
-                          },
-                        }}
-                      >
-                        {selectedFiles.map((file) => (
-                          <ListItem
-                            key={file.name}
-                            sx={{
-                              bgcolor: "#e6e6e6",
-                              minWidth: 0,
-                              borderRadius: "45px",
-                              zIndex: 2,
-                              maxWidth: "200px",
-                            }}
-                          >
-                            <InsertDriveFileIcon />
-                            <ListItemText>
-                              <Typography
-                                noWrap={true}
-                                sx={{ color: "grey", fontSize: "" }}
-                              >
-                                {file.name}
-                              </Typography>
-                            </ListItemText>
-                            <ClearIcon
-                              sx={{
-                                fontSize: "large",
-                                color: "red",
-                                cursor: "pointer",
-                                zIndex: 1,
-                              }}
-                              onClick={() => handleDelete(file)}
-                            />
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Box>
-                  )}
-                </div>
-              </label>
-              <input
-                type="file"
-                multiple
-                id="file-input"
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-              {selectedFiles.length > 0 && (
-                <Typography variant="body1">
-                  {selectedFiles.length} file(s) selected
-                </Typography>
-              )}
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{
-                  mt: "auto",
-                  position: "fixed",
-                  bottom: 16,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                }}
-                onClick={handleSubmit}
-              >
-                Submit
-              </Button>
-              <ClearIcon
-                variant="contained"
-                onClick={handleClose}
-                sx={{
-                  ml: 1,
-                  m: 2,
-                  cursor: "pointer",
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                }}
-              />
-            </Box>
+            {/* <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}> */}
+            {/* FilePicker component */}
+            <FilePicker
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              progress={0}
+              uploadStarted={false}
+              uploadURL={postUrl}
+              setOpen={setOpen}
+              handleClose={handleClose}
+            />
+            {/* </Box> */}
           </Paper>
         </Modal>
       </Box>

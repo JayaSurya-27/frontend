@@ -1,0 +1,13 @@
+/* Example responsive styles */
+@media (max-width: 600px) {
+  .files-list-container .column-cell:nth-child(2),
+  .files-list-container .column-cell:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .files-list-container .column-cell:nth-child(1) {
+    width: 70%;
+  }
+}

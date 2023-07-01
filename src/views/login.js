@@ -29,7 +29,7 @@ const Validation = Yup.object().shape({
   password: Yup.string().required("Required"),
 });
 
-const Login = ({ isLoggedIn, setIsLoggedIn }) => {
+const Login = ({ isLoggedIn, setIsLoggedIn, userType, setUserType }) => {
   const initialValues = {
     email: "",
     password: "",
@@ -37,7 +37,7 @@ const Login = ({ isLoggedIn, setIsLoggedIn }) => {
 
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(0);
-  const [userType, setUserType] = useState("individual");
+
   const [hasSelection, setHasSelection] = useState(true);
 
   const handleChange = (event, newUser) => {
@@ -69,7 +69,7 @@ const Login = ({ isLoggedIn, setIsLoggedIn }) => {
         const userId = response.data.data.id;
 
         // Store the tokens in local storage
-        
+
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("userId", userId);
