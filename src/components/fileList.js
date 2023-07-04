@@ -28,16 +28,31 @@ const FilesList = ({ files }) => {
     "Uploaded By": file.uploaded_by,
     actions: (
       <>
-        <GetAppIcon
+        {/* <GetAppIcon
           color="black"
           sx={{ cursor: "pointer", marginRight: "5px" }}
           onClick={() => handleDownload(file)}
-        />
-        <DeleteIcon
+        /> */}
+        {/* <DeleteIcon
           color="secondary"
           sx={{ cursor: "pointer" }}
           onClick={() => handleDelete(file)}
-        />
+        /> */}
+
+        <span
+          class="material-symbols-outlined"
+          onClick={() => handleDownload(file)}
+          style={{ marginRight: "20px", fontSize: "2rem" }}
+        >
+          download
+        </span>
+        <span
+          class="material-symbols-outlined"
+          onClick={() => handleDelete(file)}
+          style={{ marginLeft: "20px", color: "red", fontSize: "1.6rem" }}
+        >
+          delete
+        </span>
       </>
     ),
   }));
