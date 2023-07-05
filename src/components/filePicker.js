@@ -89,7 +89,6 @@ const FilePicker = ({ postUrl }) => {
         data.append("file", file.file);
         data.append("name", file.file.name);
         data.append("owner", localStorage.getItem("userId"));
-        
 
         await axios.post(postUrl, data, {
           onUploadProgress: (progressEvent) => {

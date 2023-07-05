@@ -6,12 +6,7 @@ import Container from "@mui/material/Container";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 
-const FilesList = ({ files }) => {
-  // const formatDate = (dateString) => {
-  //   const date = new Date(dateString);
-  //   return date.toLocaleDateString();
-  // };
-
+const FilesList = ({ files, getFiles }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     if (isNaN(date)) {
@@ -28,28 +23,17 @@ const FilesList = ({ files }) => {
     "Uploaded By": file.uploaded_by,
     actions: (
       <>
-        {/* <GetAppIcon
-          color="black"
-          sx={{ cursor: "pointer", marginRight: "5px" }}
-          onClick={() => handleDownload(file)}
-        /> */}
-        {/* <DeleteIcon
-          color="secondary"
-          sx={{ cursor: "pointer" }}
-          onClick={() => handleDelete(file)}
-        /> */}
-
         <span
           class="material-symbols-outlined"
           onClick={() => handleDownload(file)}
-          style={{ marginRight: "20px", fontSize: "2rem" }}
+          style={{ marginRight: "15px", fontSize: "1.9rem" }}
         >
           download
         </span>
         <span
           class="material-symbols-outlined"
           onClick={() => handleDelete(file)}
-          style={{ marginLeft: "20px", color: "red", fontSize: "1.6rem" }}
+          style={{ marginRight: "10px", color: "red", fontSize: "1.6rem" }}
         >
           delete
         </span>
@@ -81,8 +65,15 @@ const FilesList = ({ files }) => {
   };
 
   const handleDelete = (file) => {
-    // Implement the delete functionality
-    console.log("Delete file:", file);
+    const apiUrl = API_ENDPOINT + "api/individual/deleteFile/" + file.id;
+    axios
+      .delete(apiUrl)
+      .then((response) => {
+        getFiles();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const columns = [
@@ -92,11 +83,10 @@ const FilesList = ({ files }) => {
       headerClassName: "column-header",
       headerAlign: "center",
       cellClassName: "column-cell",
-      // disableColumnMenu: true,
+      disableColumnMenu: true,
       type: "string",
       align: "left",
       flex: 1,
-      sx: {},
     },
     {
       field: "Upload Date",
@@ -115,6 +105,7 @@ const FilesList = ({ files }) => {
       headerClassName: "column-header",
       headerAlign: "center",
       cellClassName: "column-cell",
+      disableColumnMenu: true,
       align: "center",
       flex: 1,
     },
@@ -135,7 +126,7 @@ const FilesList = ({ files }) => {
   const pageSize = 5; // Set the number of rows per page
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <div style={{ height: "calc(100vh - 230px)", width: "100%" }}>
         <DataGrid columns={columns} rows={rows} pageSize={pageSize} />
       </div>

@@ -11,25 +11,39 @@ import axios from "axios";
 import FilePicker from "../components/filePicker";
 import FileList from "../components/fileList";
 
+import Stack from "@mui/material/Stack";
+import Badge from "@mui/material/Badge";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+
 const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   const [files, setFiles] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getFiles = async () => {
     try {
-      // console.log("getFiles called");
-      // console.log(files);
       const response = await axios.get(
         `${API_ENDPOINT}api/individual/getFiles/`,
         {
           params: { id: localStorage.getItem("userId") },
         }
       );
-      setFiles(response.data.data); // the file data is stored in the 'data' property of the response
-      // console.log(response.data);
+      setFiles(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    getFiles();
+  }, []);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredFiles = files.filter((file) =>
+    file.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -38,16 +52,41 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
           <Container component="main" maxWidth="xl">
             {userType === "individual" ? (
               <>
-                <FilePicker
-                  postUrl={API_ENDPOINT + "api/individual/addFile/"}
-                />
-                <Button
-                  onClick={getFiles}
-                  sx={{ position: "absolute", top: 100 }}
-                >
-                  Refresh
-                </Button>
-                <FileList files={files} />
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label=""
+                      variant="outlined"
+                      placeholder="Search"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      fullWidth
+                      sx={{ borderRadius: "5px", ml: "20px" }}
+                    />
+                  </Grid>
+                  <Grid item xs={6} md={4} />
+                  <Grid
+                    item
+                    xs={6}
+                    md={4}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Stack spacing={2} direction="row" alignItems="center">
+                      <Badge badgeContent={10} color="secondary">
+                        <NotificationsIcon sx={{ color: "#030b17" }} />
+                      </Badge>
+                      <FilePicker
+                        postUrl={API_ENDPOINT + "api/individual/addFile/"}
+                      />
+                    </Stack>
+                  </Grid>
+                </Grid>
+
+                <FileList files={filteredFiles} getFiles={getFiles}/>
               </>
             ) : (
               <></>
