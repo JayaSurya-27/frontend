@@ -58,7 +58,8 @@ const FilePicker = ({ postUrl }) => {
         const data = new FormData();
         data.append("file", file.file);
         data.append("name", file.file.name);
-        data.append("owner", localStorage.getItem("userId"));
+        data.append("owner", "95a27a36-978b-42c5-8a63-1da6284d65ac");
+        data.append("organization", localStorage.getItem("userId"));
 
         await axios.post(postUrl, data, {
           onUploadProgress: (progressEvent) => {
@@ -74,7 +75,7 @@ const FilePicker = ({ postUrl }) => {
       }
 
       setUploadStarted(false);
-      console.log("All files uploaded successfully");
+      console.log("All files uploaded successfully");   ///
     } catch (error) {
       console.log(error);
     }
@@ -121,9 +122,7 @@ const FilePicker = ({ postUrl }) => {
           >
             <div className="wrapper">
               <div className="canvas_wrapper">
-                <DropZone
-                  onChange={handleOnChange}
-                />
+                <DropZone onChange={handleOnChange} />
               </div>
               {files.length ? (
                 <div className="files_list_wrapper">

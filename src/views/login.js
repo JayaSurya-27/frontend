@@ -29,7 +29,7 @@ const Validation = Yup.object().shape({
   password: Yup.string().required("Required"),
 });
 
-const Login = ({ isLoggedIn, setIsLoggedIn, userType, setUserType }) => {
+const Login = ({ isLoggedIn, setIsLoggedIn }) => {
   const initialValues = {
     email: "",
     password: "",
@@ -37,7 +37,7 @@ const Login = ({ isLoggedIn, setIsLoggedIn, userType, setUserType }) => {
 
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(0);
-
+  const [userType, setUserType] = useState("individual");
   const [hasSelection, setHasSelection] = useState(true);
 
   const handleChange = (event, newUser) => {
@@ -72,7 +72,9 @@ const Login = ({ isLoggedIn, setIsLoggedIn, userType, setUserType }) => {
 
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userType", userType);
         localStorage.setItem("userId", userId);
+
         // Set the access token in the Axios Authorization header
 
         setAuthHeader(accessToken);

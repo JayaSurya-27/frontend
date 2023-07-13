@@ -8,44 +8,23 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
-import FilePicker from "../components/filePicker";
-import FileList from "../components/fileList";
+import FilePickerOrg from "../components/filePickerOrg";
+import FileListOrg from "../components/fileListOrg";
 
 const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   const [files, setFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // const getFiles = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${API_ENDPOINT}api/individual/getFiles/`,
-  //       {
-  //         params: { id: localStorage.getItem("userId") },
-  //       }
-  //     );
-  //     setFiles(response.data.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getFiles();
-  // }, [getFiles]);
-
-  // const handleFileUpload = async () => {
-  //   await getFiles(); // Fetch files after uploading a new file
-  // };
-
   const getFiles = async () => {
     try {
       const response = await axios.get(
-        `${API_ENDPOINT}api/individual/getFiles/`,
+        `${API_ENDPOINT}api/organization/getFiles/`,
         {
           params: { id: localStorage.getItem("userId") },
         }
       );
       setFiles(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -55,13 +34,6 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
     getFiles();
   }, []);
 
-  const handleFileUpload = async () => {
-    try {
-      await axios.post(API_ENDPOINT + "api/individual/addFile/");
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -75,7 +47,7 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
       {isLoggedIn ? (
         <>
           <Container component="main" maxWidth="xl">
-            {userType === "individual" ? (
+            {userType === "organization" ? (
               <>
                 <Grid container alignItems="center" spacing={2}>
                   <Grid item xs={12} md={4}>
@@ -100,17 +72,16 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                       alignItems: "center",
                     }}
                   >
-                    <FilePicker
-                      postUrl={API_ENDPOINT + "api/individual/addFile/"}
-                      onFileUpload={handleFileUpload} // Call handleFileUpload after uploading a new file
+                    <FilePickerOrg
+                      postUrl={API_ENDPOINT + "api/organization/addFile/"}
                     />
                   </Grid>
                 </Grid>
 
-                <FileList files={filteredFiles} />
+                <FileListOrg files={filteredFiles} getFiles={getFiles} />
               </>
             ) : (
-              <>{/* Render content for other user types */}</>
+              <></>
             )}
           </Container>
         </>

@@ -74,6 +74,7 @@ const logout = (setIsLoggedIn) => {
   // Clear the tokens from local storage
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userType");
   localStorage.removeItem("userId");
   // Remove the access token from the Axios Authorization header
   setAuthHeader(null);

@@ -9,6 +9,7 @@ import About from "./views/about.js";
 import Contact from "./views/contact.js";
 import Login from "./views/login.js";
 import SignUp from "./views/signUp";
+import VaultOrg from "./views/vaultOrg";
 import { refreshAccessToken } from "./auth";
 
 import("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
@@ -20,13 +21,13 @@ function App() {
         main: "#305edb",
       },
       secondary: {
-        main: "#cc0e2e",
+        main: "#030317",
       },
     },
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userType, setUserType] = useState("individual");
+  var userType = localStorage.getItem("userType");
 
   const refreshToken = async () => {
     try {
@@ -52,11 +53,19 @@ function App() {
           <Route
             path="/vault"
             element={
-              <Vault
-                setIsLoggedIn={setIsLoggedIn}
-                isLoggedIn={isLoggedIn}
-                userType={userType}
-              />
+              userType === "individual" ? (
+                <Vault
+                  setIsLoggedIn={setIsLoggedIn}
+                  isLoggedIn={isLoggedIn}
+                  userType={userType}
+                />
+              ) : (
+                <VaultOrg
+                  setIsLoggedIn={setIsLoggedIn}
+                  isLoggedIn={isLoggedIn}
+                  userType={userType}
+                />
+              )
             }
           />
           <Route path="/about" element={<About />} />
@@ -64,12 +73,7 @@ function App() {
           <Route
             path="/login"
             element={
-              <Login
-                setIsLoggedIn={setIsLoggedIn}
-                isLoggedIn={isLoggedIn}
-                userType={userType}
-                setUserType={setUserType}
-              />
+              <Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} />
             }
           />
           <Route path="/signup" element={<SignUp />} />

@@ -21,60 +21,8 @@ const FilesList = ({ files, getFiles }) => {
     "File Name": file.name,
     "Upload Date": formatDate(file.date),
     "Uploaded By": file.uploaded_by,
-    actions: (
-      <>
-        <span
-          className="material-symbols-outlined"
-          onClick={() => handleDownload(file)}
-          style={{ marginRight: "15px", fontSize: "1.9rem" }}
-        >
-          download
-        </span>
-        <span
-          className="material-symbols-outlined"
-          onClick={() => handleDelete(file)}
-          style={{ marginRight: "10px", color: "red", fontSize: "1.6rem" }}
-        >
-          delete
-        </span>
-      </>
-    ),
+    "Status": file.status,
   }));
-
-  const handleDownload = (file) => {
-    const apiUrl = API_ENDPOINT + "api/individual/downloadFile/" + file.id;
-    const config = {
-      responseType: "blob",
-    };
-
-    axios
-      .get(apiUrl, config)
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = file.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleDelete = (file) => {
-    const apiUrl = API_ENDPOINT + "api/individual/deleteFile/" + file.id;
-    axios
-      .delete(apiUrl)
-      .then((response) => {
-        getFiles();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const columns = [
     {
@@ -100,8 +48,18 @@ const FilesList = ({ files, getFiles }) => {
       valueGetter: (params) => formatDate(params.value),
     },
     {
-      field: "Uploaded By",
-      headerName: "Uploaded By",
+      field: "owner",
+      headerName: "owner",
+      headerClassName: "column-header",
+      headerAlign: "center",
+      cellClassName: "column-cell",
+      disableColumnMenu: true,
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "status", // Add the "status" field
+      headerName: "Status",
       headerClassName: "column-header",
       headerAlign: "center",
       cellClassName: "column-cell",
