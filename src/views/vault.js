@@ -15,28 +15,6 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   const [files, setFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // const getFiles = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${API_ENDPOINT}api/individual/getFiles/`,
-  //       {
-  //         params: { id: localStorage.getItem("userId") },
-  //       }
-  //     );
-  //     setFiles(response.data.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getFiles();
-  // }, [getFiles]);
-
-  // const handleFileUpload = async () => {
-  //   await getFiles(); // Fetch files after uploading a new file
-  // };
-
   const getFiles = async () => {
     try {
       const response = await axios.get(
@@ -51,17 +29,19 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
     }
   };
 
-  useEffect(() => {
-    getFiles();
-  }, []);
-
   const handleFileUpload = async () => {
     try {
       await axios.post(API_ENDPOINT + "api/individual/addFile/");
+      getFiles(); // Call the getFiles function to fetch the updated list of files
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    getFiles();
+  }, [files, handleFileUpload]);
+
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -102,7 +82,6 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                   >
                     <FilePicker
                       postUrl={API_ENDPOINT + "api/individual/addFile/"}
-                      onFileUpload={handleFileUpload} // Call handleFileUpload after uploading a new file
                     />
                   </Grid>
                 </Grid>

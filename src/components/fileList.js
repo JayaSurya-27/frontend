@@ -41,27 +41,23 @@ const FilesList = ({ files, getFiles }) => {
     ),
   }));
 
-  const handleDownload = (file) => {
-    const apiUrl = API_ENDPOINT + "api/individual/downloadFile/" + file.id;
-    const config = {
-      responseType: "blob",
-    };
-
-    axios
-      .get(apiUrl, config)
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = file.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.log(error);
+  const handleDownload = async (file) => {
+    try {
+      const apiUrl = `${API_ENDPOINT}api/individual/downloadFile/${file.id}`;
+      const response = await axios.get(apiUrl, {
+        responseType: "blob",
       });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleDelete = (file) => {

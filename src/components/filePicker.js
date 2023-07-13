@@ -48,7 +48,7 @@ const FilePicker = ({ postUrl }) => {
 
   const canShowProgress = useMemo(() => files.length > 0, [files.length]);
 
-  const handleUpload = useCallback(async () => {
+  const handleUpload = async () => {
     try {
       setUploadStarted(true);
       const totalFiles = files.length;
@@ -78,7 +78,7 @@ const FilePicker = ({ postUrl }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [files]);
+  };
 
   useEffect(() => {
     if (files.length < 1) {
@@ -121,9 +121,7 @@ const FilePicker = ({ postUrl }) => {
           >
             <div className="wrapper">
               <div className="canvas_wrapper">
-                <DropZone
-                  onChange={handleOnChange}
-                />
+                <DropZone onChange={handleOnChange} />
               </div>
               {files.length ? (
                 <div className="files_list_wrapper">
