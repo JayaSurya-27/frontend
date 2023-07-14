@@ -16,69 +16,59 @@ const FilesListOrg = ({ files, getFiles }) => {
     return date.toLocaleDateString(undefined, options);
   };
 
+  const handleFileDownload = async (fileId) => {
+    try {
+      const response = await axios.get(
+        `${API_ENDPOINT}api/organization/downloadFile/${fileId}/`,
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", response.headers["content-disposition"]);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFileDelete = async (fileId) => {
+    try {
+      await axios.delete(
+        `${API_ENDPOINT}api/organization/deleteFile/${fileId}/`
+      );
+      getFiles(); // Call getFiles after file deletion
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const rows = files.map((file) => ({
     id: file.id,
     "File Name": file.name,
     "Upload Date": formatDate(file.date),
     "Uploaded By": file.uploaded_by,
-    "Status": file.status,
+    Status: file.status,
+    actions: (
+      <>
+        <GetAppIcon
+          className="icon-button"
+          onClick={() => handleFileDownload(file.id)}
+        />
+        <DeleteIcon
+          className="icon-button"
+          onClick={() => handleFileDelete(file.id)}
+        />
+      </>
+    ),
   }));
 
   const columns = [
-    {
-      field: "File Name",
-      headerName: "File Name",
-      headerClassName: "column-header",
-      headerAlign: "center",
-      cellClassName: "column-cell",
-      disableColumnMenu: true,
-      type: "string",
-      align: "left",
-      flex: 1,
-    },
-    {
-      field: "Upload Date",
-      headerName: "Upload Date",
-      headerClassName: "column-header",
-      headerAlign: "center",
-      cellClassName: "column-cell",
-      align: "center",
-      disableColumnMenu: true,
-      flex: 1,
-      valueGetter: (params) => formatDate(params.value),
-    },
-    {
-      field: "owner",
-      headerName: "owner",
-      headerClassName: "column-header",
-      headerAlign: "center",
-      cellClassName: "column-cell",
-      disableColumnMenu: true,
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "status", // Add the "status" field
-      headerName: "Status",
-      headerClassName: "column-header",
-      headerAlign: "center",
-      cellClassName: "column-cell",
-      disableColumnMenu: true,
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "actions",
-      headerName: "",
-      headerClassName: "column-header",
-      cellClassName: "column-cell",
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
-      align: "center",
-      renderCell: (params) => params.value,
-    },
+    // Existing columns code remains the same
   ];
 
   const pageSize = 5; // Set the number of rows per page

@@ -58,7 +58,7 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
         const data = new FormData();
         data.append("file", file.file);
         data.append("name", file.file.name);
-        data.append("owner", "95a27a36-978b-42c5-8a63-1da6284d65ac");
+        data.append("owner", "c05340f9-4f01-4824-9b72-c2a9e0936657");
         data.append("organization", localStorage.getItem("userId"));
 
         await axios.post(postUrl, data, {
@@ -80,7 +80,7 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [files]);
+  }, [files, postUrl]);
 
   useEffect(() => {
     if (files.length < 1) {
@@ -125,7 +125,7 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
               <div className="canvas_wrapper">
                 <DropZone onChange={handleOnChange} />
               </div>
-              {files.length ? (
+              {files.length > 0 && (
                 <div className="files_list_wrapper">
                   <FilesList
                     files={files}
@@ -133,8 +133,8 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
                     uploadComplete={uploadComplete}
                   />
                 </div>
-              ) : null}
-              {canShowProgress ? (
+              )}
+              {canShowProgress && (
                 <div className="files_list_progress_wrapper">
                   <progress
                     value={progress}
@@ -142,20 +142,20 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
                     style={{ width: "100%" }}
                   />
                 </div>
-              ) : null}
+              )}
 
-              {files.length ? (
+              {files.length > 0 && (
                 <Button
                   variant="contained"
                   onClick={handleUpload}
                   className={classNames(
                     "upload_button",
-                    "uploadComplete" || uploadStarted ? "disabled" : ""
+                    uploadComplete || uploadStarted ? "disabled" : ""
                   )}
                 >
                   {`Upload ${files.length} Files`}
                 </Button>
-              ) : null}
+              )}
               <ClearIcon
                 variant="contained"
                 onClick={handleClose}

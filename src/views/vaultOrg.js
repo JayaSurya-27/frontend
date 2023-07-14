@@ -41,6 +41,16 @@ const VaultOrg = ({ isLoggedIn, setIsLoggedIn, userType }) => {
     file.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleFileUpload = () => {
+    // Perform any additional operations related to file upload
+    getFiles();
+  };
+
+  const handleFileDelete = () => {
+    // Perform any additional operations related to file deletion
+    getFiles();
+  };
+
   return (
     <>
       org
@@ -74,12 +84,15 @@ const VaultOrg = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                   >
                     <FilePickerOrg
                       postUrl={API_ENDPOINT + "api/organization/addFile/"}
-                      getFiles={getFiles}
+                      getFiles={handleFileUpload} // Call getFiles after file upload
                     />
                   </Grid>
                 </Grid>
 
-                <FileListOrg files={filteredFiles} getFiles={getFiles} />
+                <FileListOrg
+                  files={filteredFiles}
+                  getFiles={handleFileDelete} // Call getFiles after file deletion
+                />
               </>
             ) : (
               <></>
