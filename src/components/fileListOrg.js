@@ -6,7 +6,7 @@ import Container from "@mui/material/Container";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 
-const FilesList = ({ files, getFiles }) => {
+const FilesListOrg = ({ files, getFiles }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     if (isNaN(date)) {
@@ -92,4 +92,4 @@ const FilesList = ({ files, getFiles }) => {
   );
 };
 
-export default FilesList;
+export default FilesListOrg;

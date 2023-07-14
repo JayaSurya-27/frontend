@@ -12,7 +12,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 import "../CSS/filePicker.css";
 
-const FilePicker = ({ postUrl }) => {
+const FilePicker = ({ postUrl  , getFiles}) => {
   const [files, setFiles] = useState([]);
   const [progress, setProgress] = useState(0);
   const [uploadStarted, setUploadStarted] = useState(false);
@@ -75,6 +75,7 @@ const FilePicker = ({ postUrl }) => {
 
       setUploadStarted(false);
       console.log("All files uploaded successfully");
+      await getFiles();
     } catch (error) {
       console.log(error);
     }

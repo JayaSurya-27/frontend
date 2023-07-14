@@ -61,7 +61,7 @@ const FilesList = ({ files, getFiles }) => {
   };
 
   const handleDelete = (file) => {
-    const apiUrl = API_ENDPOINT + "api/individual/deleteFile/" + file.id;
+    const apiUrl = `${API_ENDPOINT}api/individual/deleteFile/${file.id}`;
     axios
       .delete(apiUrl)
       .then((response) => {

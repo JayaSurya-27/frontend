@@ -29,18 +29,9 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
     }
   };
 
-  const handleFileUpload = async () => {
-    try {
-      await axios.post(API_ENDPOINT + "api/individual/addFile/");
-      getFiles(); // Call the getFiles function to fetch the updated list of files
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     getFiles();
-  }, [files, handleFileUpload]);
+  }, []);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -82,11 +73,12 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                   >
                     <FilePicker
                       postUrl={API_ENDPOINT + "api/individual/addFile/"}
+                      getFiles={getFiles}
                     />
                   </Grid>
                 </Grid>
 
-                <FileList files={filteredFiles} />
+                <FileList files={filteredFiles} getFiles={getFiles} />
               </>
             ) : (
               <>{/* Render content for other user types */}</>

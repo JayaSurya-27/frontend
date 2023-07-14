@@ -11,7 +11,7 @@ import axios from "axios";
 import FilePickerOrg from "../components/filePickerOrg";
 import FileListOrg from "../components/fileListOrg";
 
-const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
+const VaultOrg = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   const [files, setFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -24,7 +24,6 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
         }
       );
       setFiles(response.data.data);
-      console.log(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -44,6 +43,7 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
 
   return (
     <>
+      org
       {isLoggedIn ? (
         <>
           <Container component="main" maxWidth="xl">
@@ -74,6 +74,7 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                   >
                     <FilePickerOrg
                       postUrl={API_ENDPOINT + "api/organization/addFile/"}
+                      getFiles={getFiles}
                     />
                   </Grid>
                 </Grid>
@@ -92,4 +93,4 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   );
 };
 
-export default Vault;
+export default VaultOrg;
