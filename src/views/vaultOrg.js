@@ -42,7 +42,7 @@ const VaultOrg = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   );
 
   const handleFileUpload = () => {
-    // Perform any additional operations related to file upload
+  
     getFiles();
   };
 
@@ -53,7 +53,6 @@ const VaultOrg = ({ isLoggedIn, setIsLoggedIn, userType }) => {
 
   return (
     <>
-      org
       {isLoggedIn ? (
         <>
           <Container component="main" maxWidth="xl">

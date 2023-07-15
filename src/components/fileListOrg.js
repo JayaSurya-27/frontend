@@ -5,6 +5,8 @@ import GetAppIcon from "@mui/icons-material/GetApp";
 import Container from "@mui/material/Container";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
+import { Box, Icon } from "@mui/material";
+import PendingIcon from "@mui/icons-material/Pending";
 
 const FilesListOrg = ({ files, getFiles }) => {
   const formatDate = (dateString) => {
@@ -47,12 +49,33 @@ const FilesListOrg = ({ files, getFiles }) => {
     }
   };
 
+  const getStatusCellStyle = (status) => {
+    let backgroundColor = "";
+    let color = "";
+
+    if (status === "pending") {
+      backgroundColor = "#fcf881";
+      color = "#bfb900";
+    } else if (status === "declined") {
+      backgroundColor = "#fa9397";
+      color = "#d42f34";
+    } else if (status === "accepted") {
+      backgroundColor = "#b3ffba";
+      color = "#0fbf3b";
+    }
+
+    return {
+      backgroundColor,
+      color,
+    };
+  };
+
   const rows = files.map((file) => ({
     id: file.id,
     "File Name": file.name,
     "Upload Date": formatDate(file.date),
-    "Uploaded By": file.uploaded_by,
-    Status: file.status,
+    owner: file.owner,
+    status: file.status,
     actions: (
       <>
         <GetAppIcon
@@ -68,10 +91,71 @@ const FilesListOrg = ({ files, getFiles }) => {
   }));
 
   const columns = [
-    // Existing columns code remains the same
+    {
+      field: "File Name",
+      headerName: "File Name",
+      headerClassName: "column-header",
+      headerAlign: "center",
+      cellClassName: "column-cell",
+      disableColumnMenu: true,
+      type: "string",
+      align: "left",
+      flex: 1,
+    },
+    {
+      field: "Upload Date",
+      headerName: "Upload Date",
+      headerClassName: "column-header",
+      headerAlign: "center",
+      cellClassName: "column-cell",
+      align: "center",
+      disableColumnMenu: true,
+      flex: 1,
+      valueGetter: (params) => formatDate(params.value),
+    },
+    {
+      field: "Owner",
+      headerName: "Owner",
+      headerClassName: "column-header",
+      headerAlign: "center",
+      cellClassName: "column-cell",
+      align: "center",
+      disableColumnMenu: true,
+      flex: 1,
+      valueGetter: (params) =>
+        params.row.owner?.firstName + " " + params.row.owner?.lastName || "",
+    },
+    {
+      field: "Status",
+      headerName: "Status",
+      headerClassName: "column-header",
+      headerAlign: "center",
+      cellClassName: "column-cell",
+      align: "center",
+      disableColumnMenu: true,
+      flex: 1,
+      renderCell: (params) => (
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "5px",
+            height: "70%",
+            backgroundColor: getStatusCellStyle(params.row.status)
+              .backgroundColor,
+            color: getStatusCellStyle(params.row.status).color,
+          }}
+          component="div"
+          padding={1}
+        >
+          {params.row.status}
+        </Box>
+      ),
+    },
   ];
 
-  const pageSize = 5; // Set the number of rows per page
+  const pageSize = 5;
 
   return (
     <Container maxWidth="xl">
