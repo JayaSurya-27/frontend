@@ -9,10 +9,10 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Container, Paper } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-
+import Swal from "sweetalert2";
 import "../CSS/filePicker.css";
 
-const FilePicker = ({ postUrl  , getFiles}) => {
+const FilePicker = ({ postUrl, getFiles }) => {
   const [files, setFiles] = useState([]);
   const [progress, setProgress] = useState(0);
   const [uploadStarted, setUploadStarted] = useState(false);

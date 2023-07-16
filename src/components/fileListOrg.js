@@ -6,7 +6,6 @@ import Container from "@mui/material/Container";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 import { Box, Icon } from "@mui/material";
-import PendingIcon from "@mui/icons-material/Pending";
 
 const FilesListOrg = ({ files, getFiles }) => {
   const formatDate = (dateString) => {
@@ -18,36 +17,36 @@ const FilesListOrg = ({ files, getFiles }) => {
     return date.toLocaleDateString(undefined, options);
   };
 
-  const handleFileDownload = async (fileId) => {
-    try {
-      const response = await axios.get(
-        `${API_ENDPOINT}api/organization/downloadFile/${fileId}/`,
-        {
-          responseType: "blob",
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", response.headers["content-disposition"]);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleFileDownload = async (fileId) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${API_ENDPOINT}api/organization/downloadFile/${fileId}/`,
+  //       {
+  //         responseType: "blob",
+  //       }
+  //     );
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", response.headers["content-disposition"]);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const handleFileDelete = async (fileId) => {
-    try {
-      await axios.delete(
-        `${API_ENDPOINT}api/organization/deleteFile/${fileId}/`
-      );
-      getFiles(); // Call getFiles after file deletion
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleFileDelete = async (fileId) => {
+  //   try {
+  //     await axios.delete(
+  //       `${API_ENDPOINT}api/organization/deleteFile/${fileId}/`
+  //     );
+  //     getFiles(); // Call getFiles after file deletion
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const getStatusCellStyle = (status) => {
     let backgroundColor = "";
@@ -76,18 +75,18 @@ const FilesListOrg = ({ files, getFiles }) => {
     "Upload Date": formatDate(file.date),
     owner: file.owner,
     status: file.status,
-    actions: (
-      <>
-        <GetAppIcon
-          className="icon-button"
-          onClick={() => handleFileDownload(file.id)}
-        />
-        <DeleteIcon
-          className="icon-button"
-          onClick={() => handleFileDelete(file.id)}
-        />
-      </>
-    ),
+    // actions: (
+    //   <>
+    //     <GetAppIcon
+    //       className="icon-button"
+    //       onClick={() => handleFileDownload(file.id)}
+    //     />
+    //     <DeleteIcon
+    //       className="icon-button"
+    //       onClick={() => handleFileDelete(file.id)}
+    //     />
+    //   </>
+    // ),
   }));
 
   const columns = [
@@ -160,7 +159,12 @@ const FilesListOrg = ({ files, getFiles }) => {
   return (
     <Container maxWidth="xl">
       <div style={{ height: "calc(100vh - 230px)", width: "100%" }}>
-        <DataGrid columns={columns} rows={rows} pageSize={pageSize} />
+        <DataGrid
+          columns={columns}
+          rows={rows}
+          pageSize={pageSize}
+          rowHeight={45} // Set row height
+        />
       </div>
     </Container>
   );

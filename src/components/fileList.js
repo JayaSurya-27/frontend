@@ -124,7 +124,12 @@ const FilesList = ({ files, getFiles }) => {
   return (
     <Container maxWidth="xl">
       <div style={{ height: "calc(100vh - 230px)", width: "100%" }}>
-        <DataGrid columns={columns} rows={rows} pageSize={pageSize} />
+        <DataGrid
+          columns={columns}
+          rows={rows}
+          pageSize={pageSize}
+          rowHeight={45}
+        />
       </div>
     </Container>
   );
