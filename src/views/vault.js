@@ -10,6 +10,9 @@ import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 import FilePicker from "../components/filePicker";
 import FileList from "../components/fileList";
+import Stack from "@mui/material/Stack";
+import Badge from "@mui/material/Badge";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   const [files, setFiles] = useState([]);
@@ -71,6 +74,11 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                       alignItems: "center",
                     }}
                   >
+                    <Stack spacing={2} direction="row" alignItems="center">
+                      <Badge badgeContent={10} color="secondary">
+                        <NotificationsIcon sx={{ color: "#030b17" }} />
+                      </Badge>
+                    </Stack>
                     <FilePicker
                       postUrl={API_ENDPOINT + "api/individual/addFile/"}
                       getFiles={getFiles}

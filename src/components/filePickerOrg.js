@@ -9,7 +9,8 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Container, Paper } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-
+import Swal from "sweetalert2";
+import API_ENDPOINT from "../apiEndpoint";
 import "../CSS/filePicker.css";
 
 const FilePickerOrg = ({ postUrl, getFiles }) => {
@@ -17,6 +18,7 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
   const [progress, setProgress] = useState(0);
   const [uploadStarted, setUploadStarted] = useState(false);
   const [open, setOpen] = useState(false);
+  const [owner, setOwner] = useState("");
 
   const handleOpen = () => {
     setOpen(true);
@@ -48,6 +50,42 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
 
   const canShowProgress = useMemo(() => files.length > 0, [files.length]);
 
+  const userCheck = async () => {
+    const { value: owner } = await Swal.fire({
+      title: "Submit your user ID",
+      input: "text",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Look up",
+      showLoaderOnConfirm: true,
+      preConfirm: async (owner) => {
+        try {
+          const response = await axios.get(
+            API_ENDPOINT + "api/organization/checkUser/",
+            {
+              params: {
+                owner: owner,
+              },
+            }
+          );
+
+          if (!response.data.exists) {
+            throw new Error("User not found");
+          } else {
+            handleOpen();
+            setOwner(owner);
+          }
+          return owner;
+        } catch (error) {
+          Swal.showValidationMessage(`Request failed: ${error}`);
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+  };
+
   const handleUpload = useCallback(async () => {
     try {
       setUploadStarted(true);
@@ -58,7 +96,7 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
         const data = new FormData();
         data.append("file", file.file);
         data.append("name", file.file.name);
-        data.append("owner", "c05340f9-4f01-4824-9b72-c2a9e0936657");
+        data.append("owner", owner);
         data.append("organization", localStorage.getItem("userId"));
 
         await axios.post(postUrl, data, {
@@ -99,7 +137,7 @@ const FilePickerOrg = ({ postUrl, getFiles }) => {
   return (
     <Container component="main" maxWidth="xl">
       <Box sx={{ p: 2 }}>
-        <Button variant="contained" onClick={handleOpen}>
+        <Button variant="contained" onClick={userCheck}>
           Upload Files
         </Button>
         <Modal
