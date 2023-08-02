@@ -42,12 +42,10 @@ const VaultOrg = ({ isLoggedIn, setIsLoggedIn, userType }) => {
   );
 
   const handleFileUpload = () => {
-  
     getFiles();
   };
 
   const handleFileDelete = () => {
-    // Perform any additional operations related to file deletion
     getFiles();
   };
 

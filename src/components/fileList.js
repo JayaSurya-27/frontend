@@ -5,6 +5,7 @@ import GetAppIcon from "@mui/icons-material/GetApp";
 import Container from "@mui/material/Container";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
+import "./../CSS/fileList.css";
 
 const FilesList = ({ files, getFiles }) => {
   const formatDate = (dateString) => {
@@ -88,7 +89,6 @@ const FilesList = ({ files, getFiles }) => {
       field: "Upload Date",
       headerName: "Upload Date",
       headerClassName: "column-header",
-      headerAlign: "center",
       cellClassName: "column-cell",
       align: "center",
       disableColumnMenu: true,
@@ -99,7 +99,6 @@ const FilesList = ({ files, getFiles }) => {
       field: "Uploaded By",
       headerName: "Uploaded By",
       headerClassName: "column-header",
-      headerAlign: "center",
       cellClassName: "column-cell",
       disableColumnMenu: true,
       align: "center",
@@ -129,6 +128,7 @@ const FilesList = ({ files, getFiles }) => {
           rows={rows}
           pageSize={pageSize}
           rowHeight={45}
+          // checkboxSelection
         />
       </div>
     </Container>
