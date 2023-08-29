@@ -1,7 +1,12 @@
 .column-header {
-  background-color: #c6c5c5; /* Set the background color for the column header */
+  background-color: #e3e2e2; /* Set the background color for the column header */
+  font-weight: 500;
 }
 
-/* .column-cell {
-   
-} */
+.column-cell {
+  font-size: 15px; /* Adjust the font size as per your requirement */
+  font-weight: 300;
+  font-family: "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+}

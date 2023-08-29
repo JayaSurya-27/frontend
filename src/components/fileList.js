@@ -6,8 +6,9 @@ import Container from "@mui/material/Container";
 import API_ENDPOINT from "../apiEndpoint";
 import axios from "axios";
 import "./../CSS/fileList.css";
+import Alert from "@mui/material/Alert";
 
-const FilesList = ({ files, getFiles }) => {
+const FilesList = ({ files, getFiles, errorMessage, setErrorMessage }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     if (isNaN(date)) {
@@ -27,14 +28,19 @@ const FilesList = ({ files, getFiles }) => {
         <span
           className="material-symbols-outlined"
           onClick={() => handleDownload(file)}
-          style={{ marginRight: "15px", fontSize: "1.9rem" }}
+          style={{ marginRight: "15px", fontSize: "1.9rem", cursor: "pointer" }}
         >
           download
         </span>
         <span
           className="material-symbols-outlined"
           onClick={() => handleDelete(file)}
-          style={{ marginRight: "10px", color: "red", fontSize: "1.6rem" }}
+          style={{
+            marginRight: "10px",
+            color: "red",
+            fontSize: "1.6rem",
+            cursor: "pointer",
+          }}
         >
           delete
         </span>
@@ -70,6 +76,7 @@ const FilesList = ({ files, getFiles }) => {
       })
       .catch((error) => {
         console.log(error);
+        setErrorMessage("Error occurred while deleting the file.");
       });
   };
 
@@ -119,7 +126,6 @@ const FilesList = ({ files, getFiles }) => {
   ];
 
   const pageSize = 5; // Set the number of rows per page
-
   return (
     <Container maxWidth="xl">
       <div style={{ height: "calc(100vh - 230px)", width: "100%" }}>

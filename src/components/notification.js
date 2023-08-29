@@ -13,6 +13,7 @@ const Notification = ({ getFiles }) => {
   const [open, setOpen] = useState(false);
   const [showPending, setShowPending] = useState(true);
   const [files, setFiles] = useState([]);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const handleOpen = () => {
     setOpen(true);
@@ -37,8 +38,16 @@ const Notification = ({ getFiles }) => {
   };
 
   useEffect(() => {
-    getFileRequests();
+    getFileRequests(); // Fetch files when the component mounts
   }, []);
+
+  const getPendingCount = () => {
+    return files.filter((file) => file.status === "pending").length;
+  };
+
+  useEffect(() => {
+    setNotificationCount(getPendingCount());
+  }, [files]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -259,13 +268,19 @@ const Notification = ({ getFiles }) => {
   return (
     <>
       <Stack spacing={2} direction="row" alignItems="center">
-        <Badge badgeContent={10} color="secondary">
-          <NotificationsIcon sx={{ color: "#030b17" }} onClick={handleOpen} />
+        <Badge
+          badgeContent={notificationCount}
+          color={"teriatary"}
+          sx={{ color: "white" }}
+          max={99}
+        >
+          <NotificationsIcon sx={{ color: "#64686f" }} onClick={handleOpen} />
         </Badge>
       </Stack>
       <Modal
         open={open}
         onClose={handleClose}
+        onClick={getFileRequests}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

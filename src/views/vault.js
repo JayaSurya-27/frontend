@@ -10,8 +10,16 @@ import axios from "axios";
 import FilePicker from "../components/filePicker";
 import FileList from "../components/fileList";
 import Notification from "../components/notification";
+import Trial from "../components/trial";
 
-const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
+const Vault = ({
+  isLoggedIn,
+  setIsLoggedIn,
+  userType,
+  errorMessage,
+  setErrorMessage,
+  
+}) => {
   const [files, setFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -71,7 +79,7 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                       alignItems: "center",
                     }}
                   >
-                    <Notification getFiles={getFiles}/>
+                    <Notification getFiles={getFiles} />
                     <FilePicker
                       postUrl={API_ENDPOINT + "api/individual/addFile/"}
                       getFiles={getFiles}
@@ -79,7 +87,12 @@ const Vault = ({ isLoggedIn, setIsLoggedIn, userType }) => {
                   </Grid>
                 </Grid>
 
-                <FileList files={filteredFiles} getFiles={getFiles} />
+                <FileList
+                  files={filteredFiles}
+                  getFiles={getFiles}
+                  errorMessage={errorMessage}
+                  setErrorMessage={setErrorMessage}
+                />
               </>
             ) : (
               <>{/* Render content for other user types */}</>
